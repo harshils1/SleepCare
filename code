@@ -1,0 +1,170 @@
+//access functions that are defined somewhere else 
+#include <dht.h>
+#include <BMP280_DEV.h>
+#include <SoftwareSerial.h>
+#include <Wire.h>
+#include <stdlib.h>
+
+
+//each pin is mapped onto a physical pin on arduino 
+#define sensorPin A0
+#define sensorPinDHT 7
+#define sensorPin 8
+#define RX 10 //RX is reciever 
+#define TX 11 //TX is transmitter
+
+
+dht mySensor;
+BMP280_DEV aP;
+
+//declaration and initializing each variable
+float pressure = 0;
+float humidity = 0;
+float temperature = 0;
+int ADCValue = 0;
+int ready_flag = 0;
+int timer = 0;
+int sensorState = 0;
+
+//internet of things declaration
+String ssid = "Apple"; 
+String password ="access555"; 
+String API_key = "EL0H6VB0AE8XXWPY"; 
+String API_host = "api.thingspeak.com";
+String API_port = "80";
+float sensorTemp = 0;
+int sensorLight = 0;
+float sensorPressure = 0;
+float sensorHumidity = 0;
+int found_flag = 1;
+char bufferHumidity[6];
+char bufferTemp[6];
+char bufferPressure[8];
+
+SoftwareSerial ESP_Module(RX, TX); 
+
+//sendCommand method
+void sendCommand(String data, char result[]) {
+    if(found_flag == 1) {
+        ESP_Module.println(data);
+        found_flag = ESP_Module.find(result);
+    }
+    if (found_flag == 0) {
+        Serial.println(data + " FAIL");
+    }
+    else if (found_flag == 1) {
+        Serial.println(data + " PASS");
+    }
+    delay(300);
+}
+
+
+//data methods
+float getSensorTemp() {
+    return temperature;
+}
+
+int getSensorLight() {
+    return ADCValue;
+}
+
+float getSensorPressure() {
+    return pressure;
+}
+
+float getSensorHumidity() {
+    return humidity;
+}
+
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(sensorPinDHT, INPUT);
+  Serial.begin(9600);  
+  aP.begin(BMP280_I2C_ALT_ADDR);
+  ESP_Module.begin(115200);
+  ESP_Module.setTimeout(20000); 
+  
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(15000);
+  digitalWrite(LED_BUILTIN, LOW);
+
+  sendCommand("AT+RESTORE","ready");
+  sendCommand("AT","OK");
+  sendCommand("AT+CWMODE=1","OK");
+  sendCommand("AT+CWJAP=\"" + ssid +"\",\""+ password +"\"","OK");
+  sendCommand("AT+CIPMUX=0","OK");
+}
+
+void loop() {
+    ready_flag = 0;
+    found_flag = 1;
+    ADCValue = analogRead(sensorPin);
+    mySensor.read11(sensorPinDHT);
+    humidity = mySensor.humidity;
+    temperature = mySensor.temperature;
+    aP.startForcedConversion();
+    sensorState = digitalRead(sensorPin);
+
+    timer = millis();
+      
+    while (!ready_flag && (millis() - timer) < 5000) {
+        ready_flag = aP.getPressure(pressure);
+    }
+
+
+    sensorTemp = getSensorTemp();
+    sensorLight = getSensorLight();
+    sensorPressure = getSensorPressure();
+    sensorHumidity = getSensorHumidity();
+
+    dtostrf(sensorTemp, 5, 2, bufferTemp);
+    dtostrf(sensorPressure, 7, 2, bufferPressure);
+    dtostrf(sensorHumidity, 5, 2, bufferHumidity);
+
+    String webData = "GET /update?api_key=" + API_key + "&field1=" + bufferTemp + "&field2=" + bufferPressure + "&field3=" + String(sensorLight) + "&field4=" + bufferHumidity;
+    sendCommand("AT","OK");
+    sendCommand("AT+CIPSTART=\"TCP\",\"" + API_host + "\"," + API_port,"OK");
+    sendCommand("AT+CIPSEND=" + String(webData.length()+2),">");
+    sendCommand(webData,"+IPD");  
+      
+
+    Serial.println("__________________________________");
+    Serial.print("ADC Value: ");
+    Serial.print(ADCValue);
+    Serial.println(" lx");
+
+    Serial.println(" ");
+   
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+        
+    Serial.println(" ");
+
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.println(" Celsius");
+    
+    Serial.println(" ");
+    
+    Serial.print("Atmospheric Pressure: ");
+    Serial.print(pressure);
+    Serial.println(" hPa");
+
+    Serial.println(" ");
+
+    if (sensorState == LOW) {
+        Serial.println("Rain Detected");
+        
+    }
+    else 
+        Serial.println("No Rain Detected");
+
+    Serial.println("__________________________________");
+    
+ 
+    delay(30000);
+
+    digitalWrite(LED_BUILTIN, LOW);
+}
