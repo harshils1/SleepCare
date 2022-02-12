@@ -27,8 +27,8 @@ int timer = 0;
 int sensorState = 0;
 
 //internet of things declaration
-String ssid = "Apple"; 
-String password ="access555"; 
+String ssid = "*****"; 
+String password ="********"; 
 String API_key = "EL0H6VB0AE8XXWPY"; 
 String API_host = "api.thingspeak.com";
 String API_port = "80";
