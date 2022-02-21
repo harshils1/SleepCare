@@ -1,25 +1,22 @@
 # WeatherOrNot (Weather Station):
 
-Hey everyone! You chose to read about my Sudoku Solver repo! Below are some details if you would like to know more about the development process:
+Hey everyone! You chose to read about my weather station repo! Below are some details if you would like to know more about the development process:
 
 # Why did I make this?: 
 
-Learning Object Oriented Programming (OOP) is necessary in becoming a better programmer. Learning Java, I took it upon myself to apply OOP concepts/principles to a game since 
-they usually involve many classes which interact together. All this led to the creation of this Sudoku Solver. To push my limits a bit more, I developed this game using GUI from
-Java Swing.
+This was actually a hardware and software project submitted for a PEO Internet of Things competition. The goal was to create a weather station using hardware components such 
+as atmospheric, light, temperature, humidity, etc. sensors and then display data they collected to a data logging website through the use of an Web API. 
 
 # Technologies/Languages Used:
 
-- Java
-- Java Swing
+- Arduino
+- Hardware Components
+- C++
 
 # Problems/Challenges Faced and What I Learned:
 
-If I am being honest, the hardest part was learning about the GUI, not applying OOP principles. Although I learned a lot about polymorphism, inheritance, abstraction, and encapsulation, 
-making a GUI was pretty difficult. However, through reading documentation and watching tutorials, I was able to create my own GUI with sound effects.
-
+This was actually a really fun project to take on. 
 
 # What's next?:
 
-I have learned quite a lot about OOP concepts and applying it to a game which has a GUI. I think that I am done with this project for now, but if you (the readers) have any
-ideas as to what I can add, please let me know!
+Coming Soon!
