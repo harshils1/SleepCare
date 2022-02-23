@@ -15,7 +15,7 @@ as atmospheric, light, temperature, humidity, etc. sensors and then display data
 
 # Problems/Challenges Faced and What I Learned:
 
-This was actually a really fun project to take on. 
+This was actually a really fun project to take on. I learned a lot about low-level development (building a physical weather station, programming in Arduino, and using a API). The greatest challenge was to actually build the hardware. I often had to read documentation for circuit related topics. 
 
 # What's next?:
 
