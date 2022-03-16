@@ -155,11 +155,11 @@ void loop() {
     Serial.println(" ");
 
     if (sensorState == LOW) {
-        Serial.println("Rain Detected");
+        Serial.println("Wet");
         
     }
     else 
-        Serial.println("No Rain Detected");
+        Serial.println("Not Wet");
 
     Serial.println("__________________________________");
     
